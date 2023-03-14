@@ -1,0 +1,51 @@
+#' @title DATASET_TITLE
+#' @description DATASET_DESCRIPTION
+#' @format A data frame with 12905 rows and 44 variables:
+#' \describe{
+#'   \item{\code{COM_ID}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{ENTIDAD}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{NOM_ENT}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{MUN}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{NOM_MUN}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{LOC}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{NOM_LOC}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{POBTOT}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{prop_hogares_mujeres}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{prop_ocupada}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{grado_escolar}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{prop_educacion}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{prop_menor}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{prop_sin_escolar}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{prop_sin_salud}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{prop_hog_sbienes}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{prop_desocup}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{prop_alim}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{irs}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{hogares_recamaras}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{hogares_tecnologia}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{hogares_ptierra}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{hogares_servicios}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{hogares_eelectrica}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{hogares_drenaje}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{pob_ecactiva}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{pob_empleada}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{grad_esc}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{pob_salud}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{in_compeco}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{in_marg}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{hogares_aguaent}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{long_cam}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{dist_via}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{distancia}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{disp_agua}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{prop_pind}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{prop_inmig}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{prop_inana}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{prop_indes}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{cam_pe}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{cam_mig}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{cam_pobsol}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{cam_hogfem}}{double COLUMN_DESCRIPTION} 
+#'}
+#' @details DETAILS
+"adaptivecapacitydata"
