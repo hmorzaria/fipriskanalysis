@@ -1,0 +1,48 @@
+#' @title DATASET_TITLE
+#' @description DATASET_DESCRIPTION
+#' @format A data frame with 38 rows and 41 variables:
+#' \describe{
+#'   \item{\code{species}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{common_name}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{longevity_yrs}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{age-at-maturity (% of lifespan)}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{fecundity_mean _eggs}}{list COLUMN_DESCRIPTION}
+#'   \item{\code{fecundity_minimum _eggs}}{list COLUMN_DESCRIPTION}
+#'   \item{\code{fecundity_maximum _eggs}}{list COLUMN_DESCRIPTION}
+#'   \item{\code{gonochorism}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{maximum _length_cm}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{body_shape}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{optimal_depth_mean _m}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{optimal_depth_minimum _m}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{optimal_depth_maximum _m}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{optimal_temperature_mean _C}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{optimal_temperature_minimum_C}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{optimal_temperature_maximum _C}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{habitat_use}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{habitat_specificity}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{distribution}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{seabed_morphology}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{spawning_habitat}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{temperature_range}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{salinity_range}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{depth_range}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{seasonally_migratory}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{trophic_level_mean}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{trophic_level_minimum}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{trophic_level_maximum}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{diet}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{prey_specificity}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{spawning_period}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{spawning_cycle}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{dispersal_early_life_stages}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{early_life_history_larval_survival}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{feeding_behaviour}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{sociability}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{exposure}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{mobility}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{mobility_category}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{sensitivity_OA}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{other_stressors}}{character COLUMN_DESCRIPTION} 
+#'}
+#' @details DETAILS
+"this.data"

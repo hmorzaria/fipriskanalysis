@@ -1,0 +1,28 @@
+---
+title: "Mexico FIP Risk analysis"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(fipriskanalysis)
+```
+
+Get life history data from Google sheet. This code will get the corresponding sheet and save it as *.Rda
+
+```{r}
+
+
+read_googlesheet(sheetname = "inventario_fips", dataname="fipinventory")
+
+read_googlesheet(sheetname = "Localidades", dataname="localities")
+
+read_googlesheet(sheetname = "datos_caracteristicas", dataname="lifehistorydata")
+
+```
+
