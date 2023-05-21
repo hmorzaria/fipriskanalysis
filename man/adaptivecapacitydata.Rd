@@ -5,16 +5,14 @@
 \alias{adaptivecapacitydata}
 \title{DATASET_TITLE}
 \format{
-A data frame with 12905 rows and 44 variables:
+A data frame with 12905 rows and 46 variables:
 \describe{
-\item{\code{COM_ID}}{character COLUMN_DESCRIPTION}
-\item{\code{ENTIDAD}}{integer COLUMN_DESCRIPTION}
 \item{\code{NOM_ENT}}{character COLUMN_DESCRIPTION}
-\item{\code{MUN}}{integer COLUMN_DESCRIPTION}
 \item{\code{NOM_MUN}}{character COLUMN_DESCRIPTION}
-\item{\code{LOC}}{integer COLUMN_DESCRIPTION}
+\item{\code{COM_ID}}{character COLUMN_DESCRIPTION}
+\item{\code{dec_lon}}{double COLUMN_DESCRIPTION}
+\item{\code{dec_lat}}{double COLUMN_DESCRIPTION}
 \item{\code{NOM_LOC}}{character COLUMN_DESCRIPTION}
-\item{\code{POBTOT}}{integer COLUMN_DESCRIPTION}
 \item{\code{prop_hogares_mujeres}}{double COLUMN_DESCRIPTION}
 \item{\code{prop_ocupada}}{double COLUMN_DESCRIPTION}
 \item{\code{grado_escolar}}{double COLUMN_DESCRIPTION}
@@ -51,6 +49,10 @@ A data frame with 12905 rows and 44 variables:
 \item{\code{cam_mig}}{double COLUMN_DESCRIPTION}
 \item{\code{cam_pobsol}}{double COLUMN_DESCRIPTION}
 \item{\code{cam_hogfem}}{double COLUMN_DESCRIPTION}
+\item{\code{PC1}}{double COLUMN_DESCRIPTION}
+\item{\code{PCA_norm}}{double COLUMN_DESCRIPTION}
+\item{\code{region}}{character COLUMN_DESCRIPTION}
+\item{\code{category}}{character COLUMN_DESCRIPTION}
 }
 }
 \usage{

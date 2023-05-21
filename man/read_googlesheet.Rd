@@ -4,14 +4,19 @@
 \alias{read_googlesheet}
 \title{Read life history Google sheet}
 \usage{
-read_googlesheet(sheetname, dataname)
+read_googlesheet(sheetlink, sheetname, coltypes)
 }
 \arguments{
-\item{dataname}{}
+\item{sheetname}{name of sheet read}
+
+\item{dataname}{name of data}
 }
 \value{
 rds files for every sheet
 }
 \description{
 Read life history Google sheet
+}
+\examples{
+read_googlesheet(sheetlink, sheetname = "datos_caracteristicas")
 }

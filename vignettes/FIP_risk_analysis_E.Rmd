@@ -13,16 +13,381 @@ knitr::opts_chunk$set(
 library(fipriskanalysis)
 ```
 
-Get life history data from Google sheet. This code will get the corresponding sheet and save it as *.Rda
+Get life history data from Google sheet. This code will get the corresponding sheet and save it as *.rda in data folder
+
+```{r get fip data, include=FALSE}
+
+sheetlink = "https://docs.google.com/spreadsheets/d/1HoWV3HponuSLKvF1UyBOFXD-gbdwtiuhdui7OUnybZ4/edit#gid=2103071940"
+# 
+fipinventory <- read_googlesheet(sheetlink, sheetname = "inventario_fips_preeval", coltypes = "ccccccddDciccc")
+usethis::use_data(fipinventory, overwrite = TRUE)
+#creates template describing the data
+data.description <-sinew::makeOxygen(fipinventory)
+cat(data.description, file=here::here("R",paste0("data-","fipinventory.R")))
+
+localities <- read_googlesheet(sheetlink, sheetname = "localidades_pno", coltypes = NULL)
+#localities <- read_googlesheet(sheetlink, sheetname = "localidades_preeval")
+usethis::use_data(localities, overwrite = TRUE)
+#creates template describing the data
+data.description <-sinew::makeOxygen(localities)
+cat(data.description, file=here::here("R",paste0("data-","localities.R")))
+
+lifehistorytraits <- read_googlesheet(sheetlink, sheetname = "life_history_traits", coltypes = NULL)
+usethis::use_data(lifehistorytraits, overwrite = TRUE)
+#creates template describing the data
+data.description <-sinew::makeOxygen(lifehistorytraits)
+cat(data.description, file=here::here("R",paste0("data-","lifehistorytraits.R")))
+
+lifehistorydata <- read_googlesheet(sheetlink, sheetname = "datos_caracteristicas", coltypes = NULL)
+usethis::use_data(lifehistorydata, overwrite = TRUE)
+#creates template describing the data
+data.description <-sinew::makeOxygen(lifehistorydata)
+cat(data.description, file=here::here("R",paste0("data-","lifehistorydata.R")))
+
+#updates package documentation
+devtools::document()
+
+#rebuild and load the package
+devtools::load_all() # restarts and loads
+
+ 
+```
+
+
+Create data tables
+
+```{r}
+
+data("comunidadescosteras")
+  
+comunidades.edos.bc <- estadoscosteros %>% 
+  dplyr::filter(COM_ID %in% fiplocal.bc.id) %>% 
+  dplyr::select(COM_ID, NOM_ENT, NOM_MUN, NOM_LOC, lon_deg, lon_min, lon_sec, lat_deg, lat_min, lat_sec) 
+
+readr::write_csv(comunidades.edos.bc, here::here("outputs","Tabla_datos_posicion_geografica_comunidades.csv"))
+
+
+```
+
+
+Estimate vulnerability, for its different components
+```{r get vulnerability}
+
+#get data community vulnerability
+data("adaptivecapacitydata")
+data("estadoscosteros")
+data("localities")
+
+fiplocal.bc.id <- localities %>%
+    dplyr::filter(fip_id_number %in% c(9158, 12856, 12947, 8040)) %>%
+    dplyr::select(fip_id_number, COM_ID, locality, municipality, state) %>%
+    dplyr::mutate(fip_id_number = as.factor(fip_id_number)) %>% 
+    dplyr::distinct(COM_ID) %>% 
+    dplyr::pull(COM_ID)
+
+#composicion de la poblacion
+comppob <- c("cam_hogfem","prop_ocupada", "prop_educacion", "grado_escolar","prop_menor")
+pobreza <- c("prop_sin_escolar", "pob_sin_salud","prop_hog_sbienes","prop_desocup","irs","prop_alim")
+hogares <- c("hogares_recamaras", "hogares_ptierra", "hogares_servicios", "hogares_eelectrica", "hogares_drenaje")
+infraestructura <- c("tot_loc_subsidio", "hogares_aguaent", "long_cam" ,"dist_via", "distancia" ,"disp_agua")
+pobindigena <- c("prop_pind", "prop_inmig", "prop_inana", "prop_indes")
+disrupcion <- c("cam_pe", "cam_mig", "cam_pobsol", "cam_hogfem", "cam_religion")
+
+subsidios.dat <- readr::read_csv(here::here("data-raw","BIENPESCA.csv")) %>% 
+  dplyr::mutate(tot_subsidio = (`RECURSO FEDERAL APORTADO`+`RECURSO ESTATAL APORTADO`)) %>% 
+  dplyr::group_by(COM_ID) %>% 
+  dplyr::summarise(tot_loc_subsidio = sum(tot_subsidio)) %>% 
+  dplyr::filter(COM_ID %in% fiplocal.bc.id) 
+
+adaptive.bc <- adaptivecapacitydata %>% 
+  dplyr::filter(COM_ID %in% fiplocal.bc.id) %>% 
+  dplyr::left_join(subsidios.dat, by="COM_ID") %>% 
+  dplyr::mutate(tot_loc_subsidio = dplyr::if_else(is.na(tot_loc_subsidio),0,tot_loc_subsidio))
+
+comppob.pca <- pca_factor(thisdata = adaptive.bc, datasetname = "composicion_poblacion", namesdata = comppob) 
+pobreza.pca <- pca_factor(thisdata = adaptive.bc, datasetname = "pobreza", namesdata = pobreza)
+hogares.pca <- pca_factor(thisdata = adaptive.bc, datasetname = "hogares", namesdata = hogares)
+infraestructura.pca <- pca_factor(thisdata = adaptive.bc, datasetname = "infraestructura", namesdata = infraestructura)
+pobindigena.pca <- pca_factor(thisdata = adaptive.bc, datasetname = "poblacion_indigena", namesdata = pobindigena)
+disrupcion.pca <- pca_factor(thisdata = adaptive.bc, datasetname = "disrupcion", namesdata = disrupcion)
+
+vulnerabilidad.pca <- dplyr::bind_rows(comppob.pca, pobreza.pca, hogares.pca, infraestructura.pca, pobindigena.pca, disrupcion.pca)
+
+readr::write_csv(vulnerabilidad.pca,here::here("outputs","vulnerability_pca_results.csv"))  
+
+all.indicators <- c(comppob, pobreza, hogares, infraestructura, pobindigena, disrupcion) 
+data.set <- adaptive.bc %>%
+    dplyr::select(any_of(c("NOM_ENT", "NOM_MUN","NOM_LOC","dec_lon","dec_lat",all.indicators))) 
+
+readr::write_csv(data.set, here::here("outputs","Tabla2_a_vulnerabilidad_indicadores.csv"))
+
+```
+
+Estimate exposure
+```{r get exposure}
+
+data("sensitivitydata")
+data("estadoscosteros")
+data("localities")
+data("fipinventory")
+
+fiplocal.bc.id <- localities %>%
+    dplyr::filter(fip_id_number %in% c(9158, 12856, 12947, 8040)) %>%
+    dplyr::select(fip_id_number, COM_ID, locality, municipality, state) %>%
+    dplyr::mutate(fip_id_number = as.factor(fip_id_number)) %>% 
+    dplyr::distinct(COM_ID) %>% 
+    dplyr::pull(COM_ID)
+
+fip.catch <- fipinventory %>% 
+  dplyr::filter(fip_id_number %in% c(9158, 12856, 12947, 8040)) %>%
+  dplyr::select(fip_id_number, species, estimated_total_fip_landings_mt, estimated_total_fishery_landings_mt) %>% 
+  dplyr::left_join(localities, by="fip_id_number", multiple = "all") %>% 
+  dplyr::group_by(COM_ID) %>% 
+  dplyr::summarise(tot_estimated_fip_landings_mt = sum(estimated_total_fip_landings_mt) , tot_estimated_fishery_landings_mt= sum(estimated_total_fishery_landings_mt))
+
+#composicion de la poblacion
+pesqueria <- c("prop_pesca","neg_pesca_per_capita","tot_estimated_fip_landings_mt","tot_estimated_fishery_landings_mt","tot_captura_loc_per_capita")
+empleo <- c("pob_ecactiva", "pob_empleada","grad_esc","in_compeco","in_marg","pob_salud")
+
+sensitivity.bc <- sensitivitydata %>% 
+  dplyr::filter(COM_ID %in% fiplocal.bc.id) %>% 
+  dplyr::left_join(fip.catch, by="COM_ID")
+
+adaptive.bc <- adaptivecapacitydata %>% 
+   dplyr::filter(COM_ID %in% fiplocal.bc.id)
+  
+pesqueria.pca <- pca_factor(thisdata = sensitivity.bc, datasetname = "pesqueria", namesdata = pesqueria) 
+empleo.pca <- pca_factor(thisdata = adaptive.bc, datasetname = "empleo", namesdata = empleo)
+
+exposicion.pca <- dplyr::bind_rows(pesqueria.pca, empleo.pca)
+
+readr::write_csv(exposicion.pca,here::here("outputs","exposure_pca_results.csv"))  
+
+all.indicators <- c(pesqueria, empleo) 
+
+data.set <- adaptive.bc %>%
+    dplyr::select(any_of(c("NOM_ENT", "NOM_MUN","NOM_LOC","dec_lon","dec_lat",all.indicators)))
+
+readr::write_csv(data.set, here::here("outputs","Tabla2_b_exposicion_indicadores.csv"))
+
+
+#factorscores.impact is saved in pca_factor() and has the PC loadings by community
+
+```
+
+
+Obtain life history data by species
+
+```{r}
+
+#FIP names and numbers
+#Mexico Bahia de Los Angeles octopus - trap/diver-caught/hand gathered	9158
+#Mexico Baja California red rock lobster - trap	12856
+#Mexico Baja California red sea urchin - diver-caught	12947
+#Mexico North Pacific barred sand bass - pot/trap 8040
+
+data("fipinventory")
+data("lifehistorydata")
+data("localities")
+data("lifehistorytraits")
+
+lifehistory.trait <- get_lifehistory(lifehistorydata, localities, fipinventory, lifehistorytraits)
+
+readr::write_csv(lifehistory.trait, here::here("outputs","lifehistory_traits.csv"))
+
+
+```
+
+
+
+Estimate statistics from changes in distribution by species and future scenario
+```{r}
+
+#estimate changes in distribution
+
+future.change <- c("ssp126", "ssp245", "ssp585")
+
+species <- c("Mesocentrotus_franciscanus", "Bimaculatus","Octopus_hubbsorum","Paralabrax_nebulifer","Panulirus_interruptus")
+dirnames <- c("erizo","Pulpos","Pulpos","verdillo","Langosta")
+
+#species <- c("Mesocentrotus_franciscanus", "Octopus_hubbsorum","Paralabrax_nebulifer","Panulirus_interruptus")
+#dirnames <- c("erizo","Pulpos", "verdillo","Langosta")
+
+dist.data <- list()
+
+for(eachspecies in 1:length(species)) {
+  
+  eachspeciesname <- species[eachspecies]
+  eachdirname <- dirnames[eachspecies]
+  print(eachspeciesname)
+  print(eachdirname)
+  raster.present <- terra::rast(here::here("data-raw","modelos", eachdirname,paste0(eachspeciesname,"_avg.asc")))
+  crs.eqap <- enmSdmX::getCRS('EE Americas') # Equal area projection Americas, use getCRS() to see all projections available
+  raster.present.proj <- terra::project(raster.present, crs.eqap)
+
+  dist.stats <- lapply(future.change, calc_distchange, raster.present.proj, eachspeciesname, crs.eqap, eachdirname) 
+  
+  dist.data[[eachspecies]] <- dist.stats
+ }
+
+  
+dist.table <- dist.data %>% 
+  dplyr::bind_rows() %>% 
+  tidyr::pivot_longer(cols=centroid_velocity:rankCor, names_to = "indice") %>% 
+  dplyr::mutate(species=gsub("_"," ", species),
+                species= dplyr::if_else(species == "Bimaculatus", "Octopus bimaculatus", species))
+  
+
+readr::write_csv(dist.table, here::here("outputs","distribution_table.csv"))
+
+```
+
+Estimate hazard
+```{r get hazard}
+
+data("exposurehistorical")
+data("exposuressp126")
+data("exposuressp245")
+data("exposuressp585")
+data("estadoscosteros")
+data("localities")
+data("fipinventory")
+
+#exposure by communities
+peligroterrestre <- c("impacto_antropogenico","impacto_humano","temperatura_promedio_anual","intervalo_diurno", "precipitacion_promedio","riesgo_inundaciones")
+peligromarino <- c("riesgo_huracanes","marea_roja", "temperatura_superficial_del_mar", "productividad_primaria","oxigeno_disuelto")
+
+fiplocal.bc.id <- localities %>%
+    dplyr::filter(fip_id_number %in% c(9158, 12856, 12947, 8040)) %>%
+    dplyr::select(fip_id_number, COM_ID, locality, municipality, state) %>%
+    dplyr::mutate(fip_id_number = as.factor(fip_id_number)) %>% 
+    dplyr::distinct(COM_ID) %>% 
+    dplyr::pull(COM_ID)
+
+expohist.bc <- exposurehistorical %>% 
+  dplyr::filter(COM_ID %in% fiplocal.bc.id) %>% 
+  dplyr::mutate(escenario = "historico")
+
+expossp126.bc <- exposuressp126 %>% 
+  dplyr::filter(COM_ID %in% fiplocal.bc.id)%>% 
+  dplyr::mutate(escenario = "ssp126")
+
+expossp245.bc <- exposuressp245 %>% 
+  dplyr::filter(COM_ID %in% fiplocal.bc.id)%>% 
+  dplyr::mutate(escenario = "ssp245")
+
+expossp585.bc <- exposuressp585 %>% 
+  dplyr::filter(COM_ID %in% fiplocal.bc.id)%>% 
+  dplyr::mutate(escenario = "ssp585")
+
+peligrote.hist.pca <- pca_factor(thisdata = expohist.bc, datasetname = "peligro terrestre_hist", namesdata = peligroterrestre) 
+peligroma.hist.pca <- pca_factor(thisdata = expohist.bc, datasetname = "peligro marino_hist", namesdata = peligromarino) 
+
+peligrote.126.pca <- pca_factor(thisdata = expossp126.bc, datasetname = "peligro terrestre_ssp126", namesdata = peligroterrestre) 
+peligroma.126.pca <- pca_factor(thisdata = expossp126.bc, datasetname = "peligro marino_ssp126", namesdata = peligromarino) 
+
+peligrote.245.pca <- pca_factor(thisdata = expossp245.bc, datasetname = "peligro terrestre_ssp245", namesdata = peligroterrestre) 
+peligroma.245.pca <- pca_factor(thisdata = expossp245.bc, datasetname = "peligro marino_ssp245", namesdata = peligromarino) 
+
+peligrote.585.pca <- pca_factor(thisdata = expossp585.bc, datasetname = "peligro terrestre_ssp585", namesdata = peligroterrestre) 
+peligroma.585.pca <- pca_factor(thisdata = expossp585.bc, datasetname = "peligro marino_ssp585", namesdata = peligromarino) 
+
+hazard.pca.coms <- dplyr::bind_rows(peligrote.hist.pca, peligroma.hist.pca, peligrote.126.pca, peligroma.126.pca, 
+                                   peligrote.245.pca, peligroma.245.pca, peligrote.585.pca, peligroma.585.pca) %>% 
+                  tidyr::separate_wider_delim(cols=data_name, delim="_", names=c("data_name","scenario"))
+  
+
+readr::write_csv(hazard.pca.coms,here::here("outputs","hazard_pca_results_coms.csv"))  
+
+hazard.res <- dplyr::bind_rows(expohist.bc,expossp126.bc,expossp245.bc,expossp585.bc)
+
+readr::write_csv(hazard.res,here::here("outputs","Tabla2_c_peligro_sp_indicadores_distribucion_.csv"))  
+
+
+#factorscores.impact is saved in pca_factor() and has the PC loadings by community
+
+#hazard by fishery species
+
+lifehistory.trait <- readr::read_csv(here::here("outputs","lifehistory_traits.csv"))
+
+dist.table <- readr::read_csv(here::here("outputs","distribution_table.csv")) %>% 
+  tidyr::pivot_wider(names_from = indice, values_from = "value")
+
+#composicion de la poblacion
+lifehistory <- lifehistory.trait %>% 
+  dplyr::select(-species) %>% 
+  names()
+  
+distrib <- dist.table %>% 
+  dplyr::select(-species, -scenario) %>% 
+  names()
+
+peligrossp126.bc <- dist.table %>% 
+  dplyr::filter(scenario=="ssp126") %>% 
+  dplyr::mutate(tot_score= rowSums(dplyr::across(centroid_velocity:rankCor)), distribution = tot_score / sum(tot_score)) 
+
+peligrossp245.bc <- dist.table %>% 
+  dplyr::filter(scenario=="ssp245") %>% 
+  dplyr::mutate(tot_score= rowSums(dplyr::across(centroid_velocity:rankCor)), distribution = tot_score / sum(tot_score)) 
+
+peligrossp585.bc <- dist.table %>% 
+  dplyr::filter(scenario=="ssp585") %>% 
+  dplyr::mutate(tot_score= rowSums(dplyr::across(centroid_velocity:rankCor)), distribution = tot_score / sum(tot_score))
+
+
+peligro.sp <- dplyr::bind_rows(peligrossp126.bc, peligrossp245.bc, peligrossp585.bc)
+
+readr::write_csv(peligro.sp,here::here("outputs","Tabla2_d_peligro_sp_indicadores_distribucion.csv"))  
+
+
+lf.sensitivity <- lifehistory.trait %>% 
+  dplyr::mutate(tot_score= rowSums(dplyr::across(maximum_age_yrs:adult_mobility)), sensitivity = tot_score / sum(tot_score)) %>% 
+  dplyr::add_tally()
+
+readr::write_csv(lf.sensitivity, here::here("outputs","Tabla2_e_peligro_sp_indicadores_historiavida.csv"))  
+
+
+#factorscores.impact is saved in pca_factor() and has the PC loadings by community
+
+```
+
+```{r}
+
+vulnerabilidad.pca <- readr::read_csv(here::here("outputs","vulnerability_pca_results.csv"))  
+
+exposicion.pca <- readr::read_csv(here::here("outputs","exposure_pca_results.csv"))  
+
+exposicion.pca.coms <- readr::write_csv(exposicion.pca.coms,here::here("outputs","exposure_pca_results_coms.csv"))  
+
+max.pca.vul <- vulnerabilidad.pca %>% 
+  dplyr::group_by(data_name) %>% 
+  dplyr::summarise(loadings = max(loadings, na.rm=TRUE))
+
+max.pca.expo <- exposicion.pca %>% 
+  dplyr::group_by(data_name) %>% 
+  dplyr::summarise(loadings = max(loadings, na.rm=TRUE))  
+ 
+```
+
+
+```{r}
+#from Morrison et al. 2015
+#((L * 1) + (M * 2) + (H * 3) + (VH * 4)) / (L + M + H +VH) = Attribute or Factor Mean
+#L = # of tallies in “low” scoring bin
+#M = # of tallies in “moderate” scoring bin
+#H = # of tallies in “high” scoring bin
+#VH = # of tallies in “very high” scoring bin
+
+topsis.dir <- lifehistorytraits %>% 
+  dplyr::filter(quant_index==1) %>% 
+  dplyr::pull(ideal_directionality)
+
+```
+
+
 
 ```{r}
 
 
-read_googlesheet(sheetname = "inventario_fips", dataname="fipinventory")
-
-read_googlesheet(sheetname = "Localidades", dataname="localities")
-
-read_googlesheet(sheetname = "datos_caracteristicas", dataname="lifehistorydata")
 
 ```
-
