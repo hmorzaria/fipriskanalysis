@@ -12,7 +12,7 @@ pca_factor <- function(thisdata, datasetname, namesdata){
   print(datasetname)
 
   data.set <- thisdata %>%
-    dplyr::select(any_of(namesdata)) %>%
+    dplyr::select(tidyr::any_of(namesdata)) %>%
     as.data.frame
 
   items.scale  <- ncol(data.set)
@@ -53,7 +53,15 @@ pca_factor <- function(thisdata, datasetname, namesdata){
   #plot variables that continue most to the PCA
   res.pca <- stats::prcomp(data.set, scale = TRUE)
 
-  factoextra::fviz_pca_var(res.pca,
+  var <- factoextra::get_pca_var(res.pca)
+
+contrib.var <- var$contrib %>%
+  as.data.frame() %>%
+  dplyr::mutate(var = rownames(var$contrib))
+
+readr::write_csv(contrib.var, here::here("outputs","analysis",paste0("pca_",datasetname, "_contrib.csv")))
+
+factoextra::fviz_pca_var(res.pca,
                col.var = "contrib", # Color by contributions to the PC
                gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
                repel = TRUE     # Avoid text overlapping

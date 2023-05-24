@@ -5,7 +5,7 @@
 \alias{exposurehistorical}
 \title{DATASET_TITLE}
 \format{
-A data frame with 12905 rows and 26 variables:
+A data frame with 12905 rows and 25 variables:
 \describe{
 \item{\code{COM_ID}}{character COLUMN_DESCRIPTION}
 \item{\code{dec_lon}}{double COLUMN_DESCRIPTION}
@@ -20,7 +20,6 @@ A data frame with 12905 rows and 26 variables:
 \item{\code{riesgo_huracanes}}{double COLUMN_DESCRIPTION}
 \item{\code{riesgo_inundaciones}}{double COLUMN_DESCRIPTION}
 \item{\code{temperatura_promedio_anual}}{double COLUMN_DESCRIPTION}
-\item{\code{temperatura_superficial_del_mar}}{double COLUMN_DESCRIPTION}
 \item{\code{temperatura_superficial}}{double COLUMN_DESCRIPTION}
 \item{\code{ENTIDAD}}{integer COLUMN_DESCRIPTION}
 \item{\code{NOM_ENT}}{character COLUMN_DESCRIPTION}

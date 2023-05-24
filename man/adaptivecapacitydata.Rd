@@ -5,7 +5,7 @@
 \alias{adaptivecapacitydata}
 \title{DATASET_TITLE}
 \format{
-A data frame with 12905 rows and 46 variables:
+A data frame with 12905 rows and 47 variables:
 \describe{
 \item{\code{NOM_ENT}}{character COLUMN_DESCRIPTION}
 \item{\code{NOM_MUN}}{character COLUMN_DESCRIPTION}
@@ -49,6 +49,7 @@ A data frame with 12905 rows and 46 variables:
 \item{\code{cam_mig}}{double COLUMN_DESCRIPTION}
 \item{\code{cam_pobsol}}{double COLUMN_DESCRIPTION}
 \item{\code{cam_hogfem}}{double COLUMN_DESCRIPTION}
+\item{\code{cam_religion}}{double COLUMN_DESCRIPTION}
 \item{\code{PC1}}{double COLUMN_DESCRIPTION}
 \item{\code{PCA_norm}}{double COLUMN_DESCRIPTION}
 \item{\code{region}}{character COLUMN_DESCRIPTION}

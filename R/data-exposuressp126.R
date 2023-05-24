@@ -1,6 +1,6 @@
 #' @title DATASET_TITLE
 #' @description DATASET_DESCRIPTION
-#' @format A data frame with 12905 rows and 26 variables:
+#' @format A data frame with 12905 rows and 25 variables:
 #' \describe{
 #'   \item{\code{COM_ID}}{character COLUMN_DESCRIPTION}
 #'   \item{\code{dec_lon}}{double COLUMN_DESCRIPTION}
@@ -10,13 +10,12 @@
 #'   \item{\code{precipitacion_promedio}}{double COLUMN_DESCRIPTION}
 #'   \item{\code{productividad_primaria}}{double COLUMN_DESCRIPTION}
 #'   \item{\code{temperatura_promedio_anual}}{double COLUMN_DESCRIPTION}
-#'   \item{\code{temperatura_superficial.x}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{temperatura_superficial}}{double COLUMN_DESCRIPTION}
 #'   \item{\code{impacto_antropogenico}}{double COLUMN_DESCRIPTION}
 #'   \item{\code{impacto_humano}}{double COLUMN_DESCRIPTION}
 #'   \item{\code{marea_roja}}{double COLUMN_DESCRIPTION}
 #'   \item{\code{riesgo_huracanes}}{double COLUMN_DESCRIPTION}
 #'   \item{\code{riesgo_inundaciones}}{double COLUMN_DESCRIPTION}
-#'   \item{\code{temperatura_superficial.y}}{double COLUMN_DESCRIPTION}
 #'   \item{\code{ENTIDAD}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{NOM_ENT}}{character COLUMN_DESCRIPTION}
 #'   \item{\code{MUN}}{integer COLUMN_DESCRIPTION}

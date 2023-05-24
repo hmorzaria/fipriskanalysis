@@ -30,7 +30,12 @@ Imports:
     topsis,
     psych,
     nFactors,
-    factoextra
+    factoextra,
+    caret,
+    stringi,
+    rphylopic,
+    ggimage,
+    grid
 Remotes:
     valentinitnelav/geobuffer
     adamlilith/enmSdmX
